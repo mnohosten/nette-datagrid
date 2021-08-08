@@ -1,0 +1,152 @@
+{templateType Mnohosten\DataGrid\Renderer\Nette\DefaultRenderer}
+
+<div class="card">
+    <div class="card-body">
+        <div n:if="$dataGrid->getFilters()" class="accordion mb-3" id="accordionExample">
+            <div class="accordion-item">
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="heading2">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse2" aria-expanded="true" aria-controls="collapse2">
+                            <i class="fas fa-filter"></i>&nbsp;
+                            {$filterCaption}
+                        </button>
+                    </h2>
+                    <div class="accordion-collapse collapse {if $expandFilterForm}show{/if}" id="collapse2" aria-labelledby="heading2" data-bs-parent="#accordionExample">
+                        <div class="accordion-body">
+                            {form filterForm}
+                                <div class="row mb-3">
+                                {foreach $form->getComponents() as $c}
+                                    {continueIf $c instanceof Nette\Forms\Controls\SubmitButton}
+                                    {if $c instanceof Nette\Forms\Controls\HiddenField}
+                                        {$c->getControl()}
+                                        {php continue}
+                                    {/if}
+                                    <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                                        <div class="table-filter-label">
+                                            {$c->getLabel()}
+                                            <i>&nbsp;</i>
+                                        </div>
+                                        {$c->getControl()}
+                                    </div>
+                                {/foreach}
+                                </div>
+                                <div class="row">
+                                    <div class="col d-flex justify-content-end">
+                                        {foreach $form->getComponents() as $c}
+                                            {if $c instanceof Nette\Forms\Controls\SubmitButton}
+                                                <div style="padding-left: 0.5rem">
+                                                    {$c->getControl()}
+                                                </div>
+                                            {/if}
+                                        {/foreach}
+                                    </div>
+                                </div>
+                            {/form}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="table-ui-wrapper">
+            <div class="table-wrapper-scroll-x table-ui-scroller">
+                <table class="table table-sm table-striped table-bordered table-responsive bg-white text-nowrap">
+                    <thead>
+                    <tr>
+                        <th n:foreach="$dataGrid->getColumns() as $column">
+                            {$column->getLabel()}
+                        </th>
+                        <th n:if="$showActions" class="table-ui-sticky-col">Akce</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr n:foreach="$data as $item">
+                        <td n:foreach="$dataGrid->getColumns() as $column">
+                            {$column->render($item)|noescape}
+                        </td>
+                        <th n:if="$showActions" class="table-ui-sticky-col">
+                            {foreach $actions as $action}
+                                {if $action->hasCustomRender()}
+                                    {$action->render()|noescape}
+                                {else}
+                                    <a href="{plink $action->getHref(), $dataGrid->getPrimaryKey() => $item[$dataGrid->getPrimaryKey()]}"
+                                       class="btn btn-sm btn-info">
+                                        {$action->getLabel()}
+                                    </a>
+                                {/if}
+                            {/foreach}
+                        </th>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="row">
+            <div n:if="$showPagination" class="col-12 col-sm-6 pt-3">
+                <a n:if="$prevLink" href="{$prevLink}" class="btn btn-primary btn-sm">
+                    <i class="fas fa-arrow-left"></i>
+                    Předchozí
+                </a>
+                <a n:if="$nextLink" href="{$nextLink}" class="btn btn-primary btn-sm">
+                    Další
+                    <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+            <div class="col-12 col-sm-6">
+                {form perPageListForm, style=>"float: right"}
+                    {label itemsPerPage}<br>
+                    {input itemsPerPage, class=>'input-sm'}
+                    {input send, class=>'btn btn-sm btn-success'}
+                {/form}
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    table.table {
+        font-size: 0.8rem;
+    }
+    /*.table-wrapper-scroll-x {*/
+    /*    display: block;*/
+    /*    overflow-x: auto;*/
+    /*}*/
+    .table-filter-label i {
+        line-height: 2.1rem
+    }
+    .table-filter-label {
+        font-size: .83333rem
+    }
+    .table-ui-wrapper {
+        font-size: 0.9rem
+    }
+    .table td, .table th {
+        line-height: 1.5rem
+    }
+    /*.table-ui-wrapper {*/
+    /*    position: relative;*/
+    /*}*/
+    /*.table-ui-scroller {*/
+    /*    margin-right: 200px;*/
+    /*}*/
+
+    /*.table .table-ui-sticky-col {*/
+    /*    right: 0;*/
+    /*    position: absolute;*/
+    /*    border: 1px solid #edf2f9;*/
+    /*    top: auto;*/
+    /*    width: 200px;*/
+    /*    overflow-x: auto;*/
+    /*    text-align: right;*/
+    /*    margin-top: -1px;*/
+    /*}*/
+
+    @media screen and (max-device-width: 480px) and (orientation: portrait) {
+        .table-ui-scroller {
+            margin-right: 100px;
+        }
+        .table .table-ui-sticky-col {
+            width: 100px;
+            overflow-x: scroll;
+        }
+    }
+</style>
