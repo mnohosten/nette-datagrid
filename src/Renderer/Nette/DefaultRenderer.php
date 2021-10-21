@@ -20,7 +20,7 @@ class DefaultRenderer extends Control
     /** @persistent */
     public int $itemsPerPage = 50;
     public DataGrid $dataGrid;
-    private string $templateFile = __DIR__ . '/templates/default.latte';
+    protected string $templateFile = __DIR__ . '/templates/default.latte';
     private string $filterCaption;
     private array $itemsPerPageList = [
         10, 20, 50, 100, 500
