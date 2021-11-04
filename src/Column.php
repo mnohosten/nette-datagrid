@@ -62,6 +62,9 @@ abstract class Column
 
     protected function getValue($item)
     {
+        if(is_array($item) && isset($item[$this->name])) {
+            return $item[$this->name];
+        }
         return $this->getAccessor()->getValue($item, $this->name);
     }
 }
